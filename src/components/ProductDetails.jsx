@@ -1,8 +1,11 @@
 import { useState, useEffect } from 'react';
+import { useCart } from '../context/CartContext';
 
 export default function ProductDetails({ productId, onBack }) {
   const [product, setProduct] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [added, setAdded] = useState(false);
+  const { addToCart } = useCart();
 
   useEffect(() => {
     fetch(`https://dummyjson.com/products/${productId}`)
@@ -17,6 +20,12 @@ export default function ProductDetails({ productId, onBack }) {
       });
   }, [productId]);
 
+  function handleAddToCart() {
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }
+
   if (loading) {
     return <p style={{ textAlign: 'center', padding: '3rem' }}>Loading product details...</p>;
   }
@@ -28,19 +37,19 @@ export default function ProductDetails({ productId, onBack }) {
   return (
     <div style={styles.container}>
       <button onClick={onBack} style={styles.backButton}>← Back to Products</button>
-      
+
       <div style={styles.detailsLayout}>
         <div style={styles.imageContainer}>
           <img src={product.thumbnail} alt={product.title} style={styles.image} />
         </div>
-        
+
         <div style={styles.infoContainer}>
           <span style={styles.category}>{product.category}</span>
           <h1 style={styles.title}>{product.title}</h1>
           <p style={styles.price}>${product.price.toFixed(2)}</p>
           <p style={styles.stock}>Availability: <strong>{product.availabilityStatus}</strong> ({product.stock} left)</p>
           <p style={styles.description}>{product.description}</p>
-          
+
           <div style={styles.meta}>
             <p><strong>Brand:</strong> {product.brand || 'Generic'}</p>
             <p><strong>Rating:</strong> ⭐ {product.rating} / 5</p>
@@ -48,7 +57,12 @@ export default function ProductDetails({ productId, onBack }) {
             <p><strong>Shipping:</strong> {product.shippingInformation}</p>
           </div>
 
-          <button style={styles.cartButton}>Add to Cart</button>
+          <button
+            style={{ ...styles.cartButton, backgroundColor: added ? '#218838' : '#28a745' }}
+            onClick={handleAddToCart}
+          >
+            {added ? '✓ Added to Cart!' : 'Add to Cart'}
+          </button>
         </div>
       </div>
     </div>
@@ -68,5 +82,5 @@ const styles = {
   stock: { fontSize: '0.95rem', color: '#555', margin: 0 },
   description: { fontSize: '1rem', color: '#444', lineHeight: '1.5' },
   meta: { backgroundColor: '#f9f9f9', padding: '1rem', borderRadius: '6px', fontSize: '0.9rem', color: '#555', display: 'flex', flexDirection: 'column', gap: '0.5rem' },
-  cartButton: { backgroundColor: '#28a745', color: '#fff', border: 'none', padding: '0.75rem', fontSize: '1rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold' }
+  cartButton: { color: '#fff', border: 'none', padding: '0.75rem', fontSize: '1rem', borderRadius: '4px', cursor: 'pointer', fontWeight: 'bold', transition: 'background-color 0.2s' }
 };

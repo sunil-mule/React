@@ -1,11 +1,29 @@
+import { useCart } from '../context/CartContext';
+import { useState } from 'react';
+
 export default function ProductCard({ product, onSelect }) {
+  const { addToCart } = useCart();
+  const [added, setAdded] = useState(false);
+
+  function handleAddToCart(e) {
+    e.stopPropagation();
+    addToCart(product);
+    setAdded(true);
+    setTimeout(() => setAdded(false), 1500);
+  }
+
   return (
     <div style={styles.card} onClick={() => onSelect(product.id)}>
       <img src={product.thumbnail} alt={product.title} style={styles.image} />
       <div style={styles.info}>
         <h3 style={styles.title}>{product.title}</h3>
         <p style={styles.price}>${product.price.toFixed(2)}</p>
-        <button style={styles.button} onClick={(e) => { e.stopPropagation(); alert('Added to cart!'); }}>Add to Cart</button>
+        <button
+          style={{ ...styles.button, backgroundColor: added ? '#218838' : '#28a745' }}
+          onClick={handleAddToCart}
+        >
+          {added ? '✓ Added!' : 'Add to Cart'}
+        </button>
       </div>
     </div>
   );

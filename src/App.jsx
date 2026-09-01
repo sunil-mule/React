@@ -1,10 +1,12 @@
 import Home from "./pages/Home";
+import { CartProvider } from "./context/CartContext";
 
 function App() {
   return (
-    <Home/>
+    <CartProvider>
+      <Home />
+    </CartProvider>
   );
 }
-
 
 export default App;

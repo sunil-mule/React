@@ -2,13 +2,14 @@ import { useState, useEffect } from 'react';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Banner from '../components/Banner';
-import ProductList from '../components/ProductList';
 import ProductCard from '../components/ProductCard';
-import ProductDetail from '../components/ProductDetails';
+import ProductDetails from '../components/ProductDetails';
+import Cart from '../components/Cart';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart'
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
@@ -24,16 +25,36 @@ export default function Home() {
       });
   }, []);
 
+  function handleSelectProduct(id) {
+    setSelectedProductId(id);
+    setView('detail');
+  }
+
+  function handleBack() {
+    setView('home');
+    setSelectedProductId(null);
+  }
+
+  function handleOpenCart() {
+    setView('cart');
+  }
+
   return (
     <div>
-      <Header />
-      
-      {selectedProductId ? (
-        <ProductDetail 
-          productId={selectedProductId} 
-          onBack={() => setSelectedProductId(null)} 
+      <Header onCartClick={handleOpenCart} />
+
+      {view === 'cart' && (
+        <Cart onBack={handleBack} />
+      )}
+
+      {view === 'detail' && selectedProductId && (
+        <ProductDetails
+          productId={selectedProductId}
+          onBack={handleBack}
         />
-      ) : (
+      )}
+
+      {view === 'home' && (
         <>
           <Banner />
           <main style={styles.container}>
@@ -41,15 +62,13 @@ export default function Home() {
               <p style={{ textAlign: 'center' }}>Loading products...</p>
             ) : (
               <>
-                {/* {<ProductList products={products} onSelect={setSelectedProductId} />} */}
-
-                <h2 style={styles.sectionTitle}>Featured Products Grid</h2>
+                <h2 style={styles.sectionTitle}>Featured Products</h2>
                 <div style={styles.grid}>
                   {products.map(product => (
-                    <ProductCard 
-                      key={product.id} 
-                      product={product} 
-                      onSelect={setSelectedProductId} 
+                    <ProductCard
+                      key={product.id}
+                      product={product}
+                      onSelect={handleSelectProduct}
                     />
                   ))}
                 </div>
