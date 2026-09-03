@@ -5,11 +5,12 @@ import Banner from '../components/Banner';
 import ProductCard from '../components/ProductCard';
 import ProductDetails from '../components/ProductDetails';
 import Cart from '../components/Cart';
+import Checkout from '../components/Checkout';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart'
+  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart' | 'checkout'
   const [selectedProductId, setSelectedProductId] = useState(null);
 
   useEffect(() => {
@@ -39,12 +40,23 @@ export default function Home() {
     setView('cart');
   }
 
+  function handleOpenCheckout() {
+    setView('checkout');
+  }
+
   return (
     <div>
       <Header onCartClick={handleOpenCart} />
 
       {view === 'cart' && (
-        <Cart onBack={handleBack} />
+        <Cart onBack={handleBack} onCheckout={handleOpenCheckout} />
+      )}
+
+      {view === 'checkout' && (
+        <Checkout
+          onBack={handleBack}
+          onBackToCart={() => setView('cart')}
+        />
       )}
 
       {view === 'detail' && selectedProductId && (

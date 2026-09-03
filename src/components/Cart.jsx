@@ -1,6 +1,6 @@
 import { useCart } from '../context/CartContext';
 
-export default function Cart({ onBack }) {
+export default function Cart({ onBack, onCheckout }) {
   const { cartItems, removeFromCart, updateQuantity, cartTotal } = useCart();
 
   if (cartItems.length === 0) {
@@ -53,7 +53,7 @@ export default function Cart({ onBack }) {
             <span>Total</span>
             <span>${cartTotal.toFixed(2)}</span>
           </div>
-          <button style={styles.checkoutBtn}>Proceed to Checkout</button>
+          <button style={styles.checkoutBtn} onClick={onCheckout}>Proceed to Checkout</button>
         </div>
       </div>
     </div>
