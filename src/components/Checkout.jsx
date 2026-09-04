@@ -39,11 +39,10 @@ function validateForm(form) {
   return errors;
 }
 
-export default function Checkout({ onBack, onBackToCart }) {
+export default function Checkout({ onBack, onBackToCart, onPayment }) {
   const { cartItems, cartTotal } = useCart();
   const [form, setForm] = useState(INITIAL_FORM);
   const [errors, setErrors] = useState({});
-  const [submitted, setSubmitted] = useState(false);
 
   const itemCount = cartItems.reduce((s, i) => s + i.quantity, 0);
 
@@ -62,23 +61,7 @@ export default function Checkout({ onBack, onBackToCart }) {
       setErrors(validationErrors);
       return;
     }
-    setSubmitted(true);
-  }
-
-  if (submitted) {
-    return (
-      <div style={styles.successContainer}>
-        <div style={styles.successBox}>
-          <div style={styles.successIcon}>✓</div>
-          <h2 style={styles.successTitle}>Order Placed!</h2>
-          <p style={styles.successText}>
-            Thank you, <strong>{form.firstName}</strong>! Your order has been received.<br />
-            A confirmation will be sent to <strong>{form.email}</strong>.
-          </p>
-          <button onClick={onBack} style={styles.primaryBtn}>Continue Shopping</button>
-        </div>
-      </div>
-    );
+    onPayment(form);
   }
 
   return (
@@ -219,13 +202,6 @@ const styles = {
   summaryRow: { display: 'flex', justifyContent: 'space-between', fontSize: '0.95rem', color: '#555' },
   divider: { borderTop: '1px solid #e0e0e0' },
 
-  /* success */
-  successContainer: { display: 'flex', justifyContent: 'center', alignItems: 'center', minHeight: '60vh', padding: '2rem' },
-  successBox: { textAlign: 'center', maxWidth: '480px', border: '1px solid #e0e0e0', borderRadius: '10px', padding: '3rem 2rem', backgroundColor: '#fff' },
-  successIcon: { width: '64px', height: '64px', borderRadius: '50%', backgroundColor: '#28a745', color: '#fff', fontSize: '2rem', display: 'flex', alignItems: 'center', justifyContent: 'center', margin: '0 auto 1.5rem' },
-  successTitle: { fontSize: '1.8rem', color: '#222', marginBottom: '0.75rem' },
-  successText: { color: '#555', lineHeight: 1.7, marginBottom: '2rem' },
-  primaryBtn: { backgroundColor: '#007bff', color: '#fff', border: 'none', padding: '0.75rem 1.75rem', borderRadius: '6px', cursor: 'pointer', fontWeight: '600', fontSize: '0.95rem' },
 };
 
 const fieldStyles = {

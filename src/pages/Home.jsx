@@ -6,12 +6,15 @@ import ProductCard from '../components/ProductCard';
 import ProductDetails from '../components/ProductDetails';
 import Cart from '../components/Cart';
 import Checkout from '../components/Checkout';
+import Payment from '../components/Payment';
+import Congrats from '../components/Congrats';
 
 export default function Home() {
   const [products, setProducts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart' | 'checkout'
+  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart' | 'checkout' | 'payment' | 'congrats'
   const [selectedProductId, setSelectedProductId] = useState(null);
+  const [shippingInfo, setShippingInfo] = useState(null);
 
   useEffect(() => {
     fetch('https://dummyjson.com/products')
@@ -44,6 +47,15 @@ export default function Home() {
     setView('checkout');
   }
 
+  function handlePayment(formData) {
+    setShippingInfo(formData);
+    setView('payment');
+  }
+
+  function handlePlaceOrder() {
+    setView('congrats');
+  }
+
   return (
     <div>
       <Header onCartClick={handleOpenCart} />
@@ -56,6 +68,23 @@ export default function Home() {
         <Checkout
           onBack={handleBack}
           onBackToCart={() => setView('cart')}
+          onPayment={handlePayment}
+        />
+      )}
+
+      {view === 'payment' && (
+        <Payment
+          shippingInfo={shippingInfo}
+          onBack={handleBack}
+          onBackToCheckout={() => setView('checkout')}
+          onPlaceOrder={handlePlaceOrder}
+        />
+      )}
+
+      {view === 'congrats' && (
+        <Congrats
+          shippingInfo={shippingInfo}
+          onContinueShopping={handleBack}
         />
       )}
 
