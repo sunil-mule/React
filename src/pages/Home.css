@@ -1,0 +1,56 @@
+.home-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.home-section-title {
+  text-align: center;
+  margin: 2rem 0 1rem;
+  color: #333;
+  font-size: 1.6rem;
+}
+
+/* Default grid — full-size cards */
+.home-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 1.75rem;
+  margin-bottom: 2rem;
+}
+
+/* Compact grid — smaller columns for search results */
+.home-grid--compact {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 1rem;
+  margin-bottom: 2rem;
+}
+
+.home-loading {
+  text-align: center;
+  color: #888;
+  padding: 3rem;
+}
+
+.home-no-results {
+  text-align: center;
+  color: #888;
+  padding: 3rem;
+  font-size: 1rem;
+}
+
+.home-search-label {
+  text-align: center;
+  font-size: 1rem;
+  color: #555;
+  margin: 0.25rem 0 1.5rem;
+}
+
+.home-search-label span {
+  background: #f0f0f0;
+  padding: 0.15rem 0.5rem;
+  border-radius: 4px;
+  font-family: monospace;
+  font-size: 0.9rem;
+}

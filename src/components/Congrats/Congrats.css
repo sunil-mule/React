@@ -1,0 +1,70 @@
+.cg-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 70vh;
+  padding: 2rem;
+}
+
+.cg-card {
+  text-align: center;
+  max-width: 500px;
+  width: 100%;
+  border: 1px solid #e0e0e0;
+  border-radius: 12px;
+  padding: 3.5rem 2.5rem;
+  background: #fff;
+}
+
+.cg-check-circle {
+  width: 72px;
+  height: 72px;
+  border-radius: 50%;
+  background: #28a745;
+  color: #fff;
+  font-size: 2.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1.75rem;
+  font-weight: 700;
+}
+
+.cg-heading    { font-size: 2rem; color: #222; margin-bottom: 0.5rem; }
+.cg-subheading { font-size: 1rem; color: #666; margin-bottom: 0.75rem; }
+.cg-order-id   { font-size: 0.88rem; color: #888; margin-bottom: 1rem; }
+
+.cg-details {
+  font-size: 0.95rem;
+  color: #444;
+  line-height: 1.7;
+  margin-bottom: 1.5rem;
+}
+
+.cg-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  background: #f0fff4;
+  border: 1px solid #b2dfcc;
+  border-radius: 6px;
+  padding: 0.6rem 1rem;
+  margin-bottom: 2rem;
+  font-size: 0.88rem;
+  color: #1a6b39;
+  font-weight: 600;
+}
+
+.cg-btn {
+  background: #007bff;
+  color: #fff;
+  border: none;
+  padding: 0.8rem 2rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 1rem;
+  transition: background 0.15s;
+}
+
+.cg-btn:hover { background: #0056d6; }

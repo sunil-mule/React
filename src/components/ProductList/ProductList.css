@@ -1,0 +1,22 @@
+.pl-container {
+  margin: 2rem 0;
+  padding: 1rem;
+  background: #fff;
+  border-radius: 8px;
+  border: 1px solid #ddd;
+}
+
+.pl-heading { margin-bottom: 1rem; color: #333; font-size: 1.2rem; }
+
+.pl-list { display: flex; flex-direction: column; gap: 1rem; }
+
+.pl-item {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.5rem;
+  border-bottom: 1px solid #eee;
+}
+
+.pl-image { width: 60px; height: 60px; object-fit: cover; border-radius: 4px; }
+.pl-title { font-size: 0.95rem; color: #444; font-weight: 500; }

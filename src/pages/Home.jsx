@@ -1,64 +1,74 @@
 import { useState, useEffect } from 'react';
-import Header from '../components/Header';
-import Footer from '../components/Footer';
-import Banner from '../components/Banner';
-import ProductCard from '../components/ProductCard';
-import ProductDetails from '../components/ProductDetails';
-import Cart from '../components/Cart';
-import Checkout from '../components/Checkout';
-import Payment from '../components/Payment';
-import Congrats from '../components/Congrats';
+import Header from '../components/Header/Header';
+import Footer from '../components/Footer/Footer';
+import Banner from '../components/Banner/Banner';
+import ProductCard from '../components/ProductCard/ProductCard';
+import ProductDetails from '../components/ProductDetails/ProductDetails';
+import Cart from '../components/Cart/Cart';
+import Checkout from '../components/Checkout/Checkout';
+import Payment from '../components/Payment/Payment';
+import Congrats from '../components/Congrats/Congrats';
+import UserProfile from '../components/UserProfile/UserProfile';
+import OrderHistory from '../components/OrderHistory/OrderHistory';
+import './Home.css';
 
 export default function Home() {
-  const [products, setProducts] = useState([]);
-  const [loading, setLoading] = useState(true);
-  const [view, setView] = useState('home'); // 'home' | 'detail' | 'cart' | 'checkout' | 'payment' | 'congrats'
+  const [products, setProducts]             = useState([]);
+  const [loading, setLoading]               = useState(true);
+  const [view, setView]                     = useState('home');
   const [selectedProductId, setSelectedProductId] = useState(null);
-  const [shippingInfo, setShippingInfo] = useState(null);
+  const [shippingInfo, setShippingInfo]     = useState(null);
+  const [orderId, setOrderId]               = useState(null);
+  const [searchQuery, setSearchQuery]       = useState('');
+  const [showProfile, setShowProfile]       = useState(false);
+  const [showOrders, setShowOrders]         = useState(false);
 
   useEffect(() => {
-    fetch('https://dummyjson.com/products')
+    fetch('https://dummyjson.com/products?limit=100')
       .then(res => res.json())
-      .then(data => {
-        setProducts(data.products);
-        setLoading(false);
-      })
-      .catch(err => {
-        console.error('Error fetching products:', err);
-        setLoading(false);
-      });
+      .then(data => { setProducts(data.products); setLoading(false); })
+      .catch(err => { console.error('Error fetching products:', err); setLoading(false); });
   }, []);
 
-  function handleSelectProduct(id) {
-    setSelectedProductId(id);
-    setView('detail');
-  }
+  const filteredProducts = searchQuery.length >= 3
+    ? products.filter(p =>
+        p.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+        p.category.toLowerCase().includes(searchQuery.toLowerCase())
+      )
+    : products;
 
-  function handleBack() {
-    setView('home');
-    setSelectedProductId(null);
-  }
+  function handleSelectProduct(id) { setSelectedProductId(id); setView('detail'); }
+  function handleBack()            { setView('home'); setSelectedProductId(null); }
+  function handleOpenCart()        { setView('cart'); }
+  function handleOpenCheckout()    { setView('checkout'); }
+  function handlePayment(formData) { setShippingInfo(formData); setView('payment'); }
 
-  function handleOpenCart() {
-    setView('cart');
-  }
-
-  function handleOpenCheckout() {
-    setView('checkout');
-  }
-
-  function handlePayment(formData) {
-    setShippingInfo(formData);
-    setView('payment');
-  }
-
-  function handlePlaceOrder() {
+  function handlePlaceOrder({ paymentMethod, shippingInfo: si, orderId: oid }) {
+    setShippingInfo(si);
+    setOrderId(oid);
     setView('congrats');
   }
 
   return (
     <div>
-      <Header onCartClick={handleOpenCart} />
+      <Header
+        onCartClick={handleOpenCart}
+        onProfileClick={() => setShowProfile(true)}
+        onOrderHistoryClick={() => setShowOrders(true)}
+        onSearch={setSearchQuery}
+        onLogoClick={handleBack}
+      />
+
+      {showProfile && (
+        <UserProfile onClose={() => setShowProfile(false)} />
+      )}
+
+      {showOrders && (
+        <OrderHistory
+          onClose={() => setShowOrders(false)}
+          onLoginRequired={() => { setShowOrders(false); setShowProfile(true); }}
+        />
+      )}
 
       {view === 'cart' && (
         <Cart onBack={handleBack} onCheckout={handleOpenCheckout} />
@@ -84,35 +94,53 @@ export default function Home() {
       {view === 'congrats' && (
         <Congrats
           shippingInfo={shippingInfo}
+          orderId={orderId}
           onContinueShopping={handleBack}
         />
       )}
 
       {view === 'detail' && selectedProductId && (
-        <ProductDetails
-          productId={selectedProductId}
-          onBack={handleBack}
-        />
+        <ProductDetails productId={selectedProductId} onBack={handleBack} />
       )}
 
       {view === 'home' && (
         <>
-          <Banner />
-          <main style={styles.container}>
+          {!searchQuery && (
+            <Banner
+              imageUrl="https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=1400&q=80"
+              title="Mega Sale Event"
+              subtitle="Explore top-rated products with incredible discounts."
+            />
+          )}
+          <main className="home-container">
             {loading ? (
-              <p style={{ textAlign: 'center' }}>Loading products...</p>
+              <p className="home-loading">Loading products…</p>
             ) : (
               <>
-                <h2 style={styles.sectionTitle}>Featured Products</h2>
-                <div style={styles.grid}>
-                  {products.map(product => (
-                    <ProductCard
-                      key={product.id}
-                      product={product}
-                      onSelect={handleSelectProduct}
-                    />
-                  ))}
-                </div>
+                <h2 className="home-section-title">
+                  {searchQuery ? 'Search Results' : 'Featured Products'}
+                </h2>
+
+                {searchQuery && (
+                  <p className="home-search-label">
+                    Showing {filteredProducts.length} result{filteredProducts.length !== 1 ? 's' : ''} for <span>{searchQuery}</span>
+                  </p>
+                )}
+
+                {filteredProducts.length === 0 ? (
+                  <p className="home-no-results">No products match your search.</p>
+                ) : (
+                  <div className={searchQuery ? 'home-grid--compact' : 'home-grid'}>
+                    {filteredProducts.map(product => (
+                      <ProductCard
+                        key={product.id}
+                        product={product}
+                        onSelect={handleSelectProduct}
+                        compact={!!searchQuery}
+                      />
+                    ))}
+                  </div>
+                )}
               </>
             )}
           </main>
@@ -123,9 +151,3 @@ export default function Home() {
     </div>
   );
 }
-
-const styles = {
-  container: { maxWidth: '1200px', margin: '0 auto', padding: '2rem' },
-  sectionTitle: { textAlign: 'center', margin: '2rem 0 1rem', color: '#333' },
-  grid: { display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', gap: '2rem', marginBottom: '2rem' }
-};

@@ -1,4 +1,3 @@
-
 import { createContext, useContext, useState } from 'react';
 
 const CartContext = createContext(null);
@@ -23,20 +22,21 @@ export function CartProvider({ children }) {
   }
 
   function updateQuantity(productId, quantity) {
-    if (quantity < 1) {
-      removeFromCart(productId);
-      return;
-    }
+    if (quantity < 1) { removeFromCart(productId); return; }
     setCartItems(prev =>
       prev.map(item => item.id === productId ? { ...item, quantity } : item)
     );
+  }
+
+  function clearCart() {
+    setCartItems([]);
   }
 
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const cartTotal = cartItems.reduce((sum, item) => sum + item.price * item.quantity, 0);
 
   return (
-    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, cartCount, cartTotal }}>
+    <CartContext.Provider value={{ cartItems, addToCart, removeFromCart, updateQuantity, clearCart, cartCount, cartTotal }}>
       {children}
     </CartContext.Provider>
   );
